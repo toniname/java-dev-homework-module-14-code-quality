@@ -1,27 +1,29 @@
 import java.util.Arrays;
 import java.util.Scanner;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import static java.lang.System.*;
-import static java.lang.System.in;
+
 
 public class TicTacToeGame {
-    private static final AtomicBoolean boxAvailable = new AtomicBoolean(false);
-    private static final Scanner scan = new Scanner(in);
     private byte winner = 0;
     private final char[] box = {'1', '2', '3', '4', '5', '6', '7', '8', '9'};
-
+    private boolean boxAvailable = false;
+    private final Scanner scan = new Scanner(System.in);
 
 
     void play() {
         out.println("Enter box number to select. Enjoy!\n");
 
-        do {
+        while (true) {
             printBoard();
 
-            if (!boxAvailable.get()) {
+            if (!boxAvailable) {
                 clearBoard();
-                boxAvailable.set(true);
+                boxAvailable = true;
+            }
+
+            if (winner != 0) {
+                printResult();
+                break;
             }
 
             playerMove();
@@ -30,7 +32,7 @@ public class TicTacToeGame {
                 continue;
             }
 
-            if (!boxAvailable.get()) {
+            if (!boxAvailable) {
                 winner = 3;
                 continue;
             }
@@ -39,12 +41,7 @@ public class TicTacToeGame {
             if (checkWinner('O')) {
                 winner = 2;
             }
-
-            if (winner != 0) {
-                printResult();
-                break;
-            }
-        } while (true);
+        }
     }
 
     private void printBoard() {
@@ -56,7 +53,7 @@ public class TicTacToeGame {
     }
 
     private void clearBoard() {
-        byte i = 0;
+        byte i;
         for (i = 0; i < 9; i++) {
             box[i] = ' ';
         }
@@ -89,11 +86,17 @@ public class TicTacToeGame {
     }
 
     private void computerMove() {
-        while (true) {
-            byte rand = (byte) (Math.random() * (9 - 1 + 1) + 1);
-            if (box[rand - 1] != 'X' && box[rand - 1] != 'O') {
-                box[rand - 1] = 'O';
-                break;
+        int center = 4;
+
+        if (box[center] != 'X' && box[center] != 'O') {
+            box[center] = 'O';
+        } else {
+            while (true) {
+                byte rand = (byte) (Math.random() * (9 - 1 + 1) + 1);
+                if (box[rand - 1] != 'X' && box[rand - 1] != 'O') {
+                    box[rand - 1] = 'O';
+                    break;
+                }
             }
         }
     }
